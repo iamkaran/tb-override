@@ -1,0 +1,9 @@
+package core
+
+type contextKey string
+
+const (
+	ConfigKey   contextKey = "config"
+	PlatformKey contextKey = "platform"
+	LoggerKey   contextKey = "logger" // Is imported in logger.go
+)

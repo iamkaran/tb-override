@@ -1,0 +1,12 @@
+thingsboard:
+  host: "https://thingsboard.cloud"
+  port: 8080
+logger:
+  format: "text"
+  level: "info"
+tb-override:
+  nginx_config: "~/.local/share/tb-override/active/tb-override.conf"
+  state_file: "~/.local/share/tb-override/active/state.json"
+  css_filename: "custom.css"
+  themes_directory: "~/.local/share/tb-override/themes"
+  active_directory: "~/.local/share/tb-override/active/assets"
