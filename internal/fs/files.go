@@ -7,11 +7,14 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/iamkaran/tb-override/internal/config"
 	"github.com/iamkaran/tb-override/internal/core"
+	"golang.org/x/sys/unix"
 )
 
-func CreateFile(log *slog.Logger, path string) error {
-	if os.Geteuid() != 0 && requireRootPrivilages(path, []string{"/var", "/usr", "/etc"}) {
+func CreateFile(log *slog.Logger, cfg *config.Config, path string) error {
+	err := unix.Access(cfg.TBOverride.Dirs.RootDirectory, unix.W_OK)
+	if err != nil {
 		return core.ErrNoRootPrivilages
 	}
 

@@ -5,8 +5,14 @@ logger:
   format: "text"
   level: "info"
 tb-override:
-  nginx_config: "~/.local/share/tb-override/active/tb-override.conf"
-  state_file: "~/.local/share/tb-override/active/state.json"
-  css_filename: "custom.css"
-  themes_directory: "~/.local/share/tb-override/themes"
-  active_directory: "~/.local/share/tb-override/active/assets"
+  files:
+    state_file: "active/state.json"
+    css_filename: "custom.css"
+    nginx_config: "active/tb-override.conf"
+    variables_filename: "variables.json"
+  dirs:
+    root_directory: "/opt/tb-override"
+    active_directory: "active/assets"
+    themes_directory: "themes"
+  misc:
+    skip_proxy_check: "true"

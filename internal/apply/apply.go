@@ -16,7 +16,7 @@ type JSONState struct {
 }
 
 func ApplyTheme(log *slog.Logger, cfg *config.Config, themeName string) error {
-	listOfThemes, err := fs.ListDirs(cfg.TBOverride.ThemesDirectory)
+	listOfThemes, err := fs.ListDirs(cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Dirs.ThemesDirectory)
 	if err != nil {
 		return err
 	}
@@ -35,7 +35,7 @@ func ApplyTheme(log *slog.Logger, cfg *config.Config, themeName string) error {
 	}
 
 	fileData, _ := json.MarshalIndent(data, "", "    ")
-	err = fs.WriteToFile(cfg.TBOverride.StateFile, fileData)
+	err = fs.WriteToFile(cfg.TBOverride.Dirs.RootDirectory+"/"+cfg.TBOverride.Files.StateFile, fileData)
 	if err != nil {
 		return err
 	}

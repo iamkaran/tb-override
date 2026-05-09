@@ -8,7 +8,6 @@ import (
 )
 
 func TestJSONFetch(t *testing.T) {
-	variables := &variables.VariablesJSON{}
 	variables, err := variables.LoadMap("variables.json")
 	if err != nil {
 		log.Fatal(err)

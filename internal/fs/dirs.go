@@ -3,16 +3,19 @@ package fs
 
 import (
 	"errors"
+	"golang.org/x/sys/unix"
 	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
 
+	"github.com/iamkaran/tb-override/internal/config"
 	"github.com/iamkaran/tb-override/internal/core"
 )
 
-func CreateDir(log *slog.Logger, path string) error {
-	if os.Geteuid() != 0 && requireRootPrivilages(path, []string{"/var", "/usr", "/etc"}) {
+func CreateDir(log *slog.Logger, cfg *config.Config, path string) error {
+	err := unix.Access(cfg.TBOverride.Dirs.RootDirectory, unix.W_OK)
+	if err != nil {
 		return core.ErrNoRootPrivilages
 	}
 
@@ -38,16 +41,6 @@ func CreateDir(log *slog.Logger, path string) error {
 	}
 
 	return nil
-}
-
-func requireRootPrivilages(path string, prefixList []string) bool {
-	cleanPath := filepath.Clean(path)
-	for _, p := range prefixList {
-		if strings.HasPrefix(cleanPath, p) {
-			return true
-		}
-	}
-	return false
 }
 
 func ListDirs(path string) ([]string, error) {
