@@ -4,8 +4,9 @@ package setup
 import (
 	"context"
 	"errors"
-	"fmt"
+	"io"
 	"log/slog"
+	"os"
 	"path/filepath"
 
 	"github.com/iamkaran/tb-override/internal/config"
@@ -16,45 +17,65 @@ import (
 func Setup(ctx context.Context, log *slog.Logger, cfg *config.Config) error {
 	// tb-override nginx directory
 	directories := []string{
-		cfg.TBOverride.ThemesDirectory,
-		cfg.TBOverride.ActiveDirectory,
+		cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Dirs.ThemesDirectory,
+		cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Dirs.ActiveDirectory,
 	}
 
 	files := []string{
-		cfg.TBOverride.NginxConfig,
-		cfg.TBOverride.StateFile,
+		cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Files.NginxConfig,
+		cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Files.StateFile,
 	}
 
-	err := validateAndCreate(log, "directory", directories)
+	err := validateAndCreate(log, cfg, "directory", directories)
 	if err != nil {
 		return err
 	}
 
-	err = validateAndCreate(log, "file", files)
+	err = validateAndCreate(log, cfg, "file", files)
 	if err != nil {
 		return err
 	}
 
-	fmt.Println("Required directories and files have been created")
+	variablesPath := "example_variables.json"
+	src, err := os.Open(variablesPath)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_ = src.Close()
+	}()
+
+	dst, err := os.Create(cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Files.VariablesFilename)
+	if err != nil {
+		return err
+	}
+	defer func() {
+		_ = src.Close()
+	}()
+
+	_, err = io.Copy(dst, src)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }
 
-func validateAndCreate(log *slog.Logger, actionType string, objects []string) error {
+func validateAndCreate(log *slog.Logger, cfg *config.Config, actionType string, objects []string) error {
 	for _, path := range objects {
 		cleanPath := filepath.Clean(path)
 
 		var err error
 		switch actionType {
 		case "file":
-			err = fs.CreateFile(log, cleanPath)
+			err = fs.CreateFile(log, cfg, cleanPath)
 		case "directory":
-			err = fs.CreateDir(log, cleanPath)
+			err = fs.CreateDir(log, cfg, cleanPath)
 		}
 
 		if errors.Is(err, core.ErrNoRootPrivilages) {
 			log.Error(core.ErrNoRootPrivilages.Error(), actionType, cleanPath)
-			return err
+			return core.ErrNoRootPrivilages
 		} else if errors.Is(err, core.ErrAlreadyExists) {
 			log.Debug("skipping creation, already exists", actionType, cleanPath)
 		} else if err != nil {

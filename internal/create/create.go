@@ -9,14 +9,14 @@ import (
 )
 
 func CreateTheme(log *slog.Logger, cfg *config.Config, themeName string) error {
-	themesDirectory := cfg.TBOverride.ThemesDirectory
-	customThemeDirectory := fmt.Sprintf("%s/%s", themesDirectory, themeName)
-	cssFilePath := fmt.Sprintf("%s/%s", customThemeDirectory, cfg.TBOverride.CSSFilename)
+	themesDirectory := cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Dirs.ThemesDirectory
+	customThemeDirectory := themesDirectory + "/" + themeName
+	cssFilePath := customThemeDirectory + "/" + cfg.TBOverride.Files.CSSFilename
 
-	if err := fs.CreateDir(log, customThemeDirectory); err != nil {
+	if err := fs.CreateDir(log, cfg, customThemeDirectory); err != nil {
 		return err
 	}
-	if err := fs.CreateFile(log, cssFilePath); err != nil {
+	if err := fs.CreateFile(log, cfg, cssFilePath); err != nil {
 		return err
 	}
 

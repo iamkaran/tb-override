@@ -28,11 +28,26 @@ type ThingsboardConfig struct {
 }
 
 type TBOverrideConfig struct {
-	NginxConfig     string `mapstructure:"nginx_config"`
-	StateFile       string `mapstructure:"state_file"`
-	CSSFilename     string `mapstructure:"css_filename"`
+	Files TBOverrideFilesConfig `mapstructure:"files"`
+	Dirs  TBOverrideDirsConfig  `mapstructure:"dirs"`
+	Misc  TBOverrideMiscConfig  `mapstructure:"misc"`
+}
+
+type TBOverrideFilesConfig struct {
+	NginxConfig       string `mapstructure:"nginx_config"`
+	StateFile         string `mapstructure:"state_file"`
+	CSSFilename       string `mapstructure:"css_filename"`
+	VariablesFilename string `mapstructure:"variables_filename"`
+}
+
+type TBOverrideDirsConfig struct {
+	RootDirectory   string `mapstructure:"root_directory"`
 	ThemesDirectory string `mapstructure:"themes_directory"`
 	ActiveDirectory string `mapstructure:"active_directory"`
+}
+
+type TBOverrideMiscConfig struct {
+	SkipProxyCheck bool `mapstructure:"skip_proxy_check"`
 }
 
 type LoggerConfig struct {
@@ -82,17 +97,18 @@ func InitializeConfig(cfgFile string, cmd *cobra.Command) error {
 		return err
 	}
 
-	platform, err := detect.PlatformInfo()
-	if err != nil {
-		return err
-	}
-
 	ctx := cmd.Context()
-	ctx = context.WithValue(ctx, core.ConfigKey, cfg)
-	ctx = context.WithValue(ctx, core.PlatformKey, platform)
-
 	log := logger.New(cfg.Logger.Level, cfg.Logger.Format)
 	ctx = context.WithValue(ctx, core.LoggerKey, log)
+
+	platform, err := detect.PlatformInfo()
+	if err != nil && !cfg.TBOverride.Misc.SkipProxyCheck {
+		log.Error("NGINX Not found $PATH")
+	}
+
+	ctx = context.WithValue(ctx, core.ConfigKey, cfg)
+
+	ctx = context.WithValue(ctx, core.PlatformKey, platform)
 
 	log.Debug("config object", "config", cfg)
 	cmd.SetContext(ctx)

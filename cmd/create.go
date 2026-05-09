@@ -4,6 +4,7 @@ Copyright © 2026 Karanveer Singh kforkaranveer@gmail.com
 package cmd
 
 import (
+	"fmt"
 	"github.com/iamkaran/tb-override/internal/config"
 	"github.com/iamkaran/tb-override/internal/create"
 	"github.com/iamkaran/tb-override/internal/logger"
@@ -17,7 +18,7 @@ var createCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		name, err := cmd.Flags().GetString("name")
 		if err != nil {
-			panic(err)
+			fmt.Println(err)
 		}
 
 		log := logger.FromContext(cmd.Context())
@@ -25,7 +26,7 @@ var createCmd = &cobra.Command{
 
 		err = create.CreateTheme(log, cfg, name)
 		if err != nil {
-			panic(err)
+			fmt.Println(err)
 		}
 	},
 }
