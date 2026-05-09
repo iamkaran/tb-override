@@ -12,11 +12,11 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func ListVariables(ctx context.Context, cfg *config.Config, cmd *cobra.Command) {
+func ListVariables(ctx context.Context, cfg *config.Config, cmd *cobra.Command) error {
 	cssProperties, err := variables.LoadMap(cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Files.VariablesFilename)
 
 	if err != nil {
-		panic(err)
+		return err
 	}
 	if listCategories, _ := cmd.Flags().GetBool("list-categories"); listCategories {
 		categories := cssProperties.FetchCategories()
@@ -49,8 +49,10 @@ func ListVariables(ctx context.Context, cfg *config.Config, cmd *cobra.Command) 
 	}
 	err = w.Flush()
 	if err != nil {
-		panic(err)
+		return err
 	}
+
+	return nil
 }
 
 func printRow(w *tabwriter.Writer, name, def, typ, desc string) {

@@ -7,7 +7,6 @@ import (
 	"fmt"
 
 	"github.com/iamkaran/tb-override/internal/detect"
-	"github.com/iamkaran/tb-override/internal/logger"
 
 	"github.com/spf13/cobra"
 )
@@ -16,14 +15,16 @@ import (
 var detectCmd = &cobra.Command{
 	Use:   "detect",
 	Short: "Detects the tools necessary for tb-override to work",
-	Run: func(cmd *cobra.Command, args []string) {
-		log := logger.FromContext(cmd.Context())
+	RunE: func(cmd *cobra.Command, args []string) error {
 		platform, err := detect.PlatformInfo()
 		if err != nil {
-			log.Error("Couldn't get platform info", "error", err)
+			return err
 		}
+
 		fmt.Printf("Proxy: %s\n", platform.Proxy.Type)
 		fmt.Printf("Supported: %v\n", platform.Proxy.Supported)
+
+		return nil
 	},
 }
 

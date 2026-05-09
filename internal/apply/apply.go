@@ -11,10 +11,6 @@ import (
 	"github.com/iamkaran/tb-override/internal/fs"
 )
 
-type JSONState struct {
-	ActiveTheme string `json:"active_theme"`
-}
-
 func ApplyTheme(log *slog.Logger, cfg *config.Config, themeName string) error {
 	listOfThemes, err := fs.ListDirs(cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Dirs.ThemesDirectory)
 	if err != nil {
@@ -30,7 +26,7 @@ func ApplyTheme(log *slog.Logger, cfg *config.Config, themeName string) error {
 		return core.ErrInvalidTheme
 	}
 
-	data := JSONState{
+	data := core.JSONState{
 		ActiveTheme: themeName,
 	}
 

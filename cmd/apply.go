@@ -14,10 +14,10 @@ import (
 var applyCmd = &cobra.Command{
 	Use:   "apply",
 	Short: "Apply a certain theme to make it active",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		name, err := cmd.Flags().GetString("name")
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		log := logger.FromContext(cmd.Context())
@@ -25,15 +25,15 @@ var applyCmd = &cobra.Command{
 
 		err = apply.ApplyTheme(log, cfg, name)
 		if err != nil {
-			log.Error(err.Error())
+			return err
 		}
+
+		return nil
 	},
 }
 
 func init() {
 	rootCmd.AddCommand(applyCmd)
 	applyCmd.Flags().StringP("name", "n", "", "Name of the theme")
-	if err := applyCmd.MarkFlagRequired("name"); err != nil {
-		panic(err)
-	}
+	_ = applyCmd.MarkFlagRequired("name")
 }
