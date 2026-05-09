@@ -3,6 +3,7 @@ package setup
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
 	"io"
 	"log/slog"
@@ -54,6 +55,16 @@ func Setup(ctx context.Context, log *slog.Logger, cfg *config.Config) error {
 	}()
 
 	_, err = io.Copy(dst, src)
+	if err != nil {
+		return err
+	}
+
+	data := core.JSONState{
+		ActiveTheme: "",
+	}
+
+	fileData, _ := json.MarshalIndent(data, "", "    ")
+	err = fs.WriteToFile(cfg.TBOverride.Dirs.RootDirectory+"/"+cfg.TBOverride.Files.StateFile, fileData)
 	if err != nil {
 		return err
 	}

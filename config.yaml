@@ -6,8 +6,8 @@ logger:
   level: "info"
 tb-override:
   files:
-    state_file: "active/state.json"
     css_filename: "custom.css"
+    state_file: "active/state.json"
     nginx_config: "active/tb-override.conf"
     variables_filename: "variables.json"
   dirs:

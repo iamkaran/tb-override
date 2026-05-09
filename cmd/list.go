@@ -13,9 +13,15 @@ import (
 var listCmd = &cobra.Command{
 	Use:   "list",
 	Short: "List of common CSS properties of ThingsBoard CE",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg := config.FromContext(cmd.Context())
-		list.ListVariables(cmd.Context(), cfg, cmd)
+
+		err := list.ListVariables(cmd.Context(), cfg, cmd)
+		if err != nil {
+			return err
+		}
+
+		return nil
 	},
 }
 

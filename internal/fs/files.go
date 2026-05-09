@@ -1,6 +1,7 @@
 package fs
 
 import (
+	"encoding/json"
 	"errors"
 	"log/slog"
 	"os"
@@ -77,4 +78,23 @@ func WriteToFile(path string, data []byte) error {
 	}
 
 	return nil
+}
+
+func GetActiveCSS(cfg *config.Config) (string, error) {
+	stateFile, err := os.ReadFile(cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Files.StateFile)
+	if err != nil {
+		return "", err
+	}
+
+	state := core.JSONState{}
+	err = json.Unmarshal(stateFile, &state)
+	if err != nil {
+		return "", err
+	}
+
+	if state.ActiveTheme == "" {
+		return "", core.ErrNoActiveTheme
+	}
+
+	return state.ActiveTheme, nil
 }

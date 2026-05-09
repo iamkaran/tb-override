@@ -10,4 +10,7 @@ var (
 	ErrNoRootPrivilages = errors.New("root privilages are required")
 	ErrAlreadyExists    = errors.New("directory or file already exists")
 	ErrInvalidTheme     = errors.New("theme does not exist")
+
+	// Theme
+	ErrNoActiveTheme = errors.New("no active theme is configured")
 )

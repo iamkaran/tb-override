@@ -18,20 +18,22 @@ import (
 var setupCmd = &cobra.Command{
 	Use:   "setup",
 	Short: "Setup the required directories and files required for tb-override to work",
-	Run: func(cmd *cobra.Command, args []string) {
+	RunE: func(cmd *cobra.Command, args []string) error {
 		log := logger.FromContext(cmd.Context())
 		cfg := config.FromContext(cmd.Context())
+
 		err := setup.Setup(cmd.Context(), log, cfg)
 		if err != nil {
 			if errors.Is(err, core.ErrNoRootPrivilages) {
-				fmt.Println("Setup failed, please run permission related commands first")
+				return err
 			} else {
-				log.Debug(err.Error())
-				fmt.Println("Setup failed")
+				return err
 			}
 		} else {
 			fmt.Println("Required directories and files have been created")
 		}
+
+		return nil
 	},
 }
 
