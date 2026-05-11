@@ -10,6 +10,7 @@ tb-override:
     state_file: "active/state.json"
     nginx_config: "active/tb-override.conf"
     variables_filename: "variables.json"
+    example_variables_filename: "example_variables.json"
   dirs:
     root_directory: "/opt/tb-override"
     active_directory: "active/assets"

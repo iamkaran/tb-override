@@ -17,14 +17,20 @@ import (
 
 func Setup(ctx context.Context, log *slog.Logger, cfg *config.Config) error {
 	// tb-override nginx directory
+	themesDir := filepath.Join(cfg.TBOverride.Dirs.RootDirectory, cfg.TBOverride.Dirs.ThemesDirectory)
+	activeDir := filepath.Join(cfg.TBOverride.Dirs.RootDirectory, cfg.TBOverride.Dirs.ActiveDirectory)
+
 	directories := []string{
-		cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Dirs.ThemesDirectory,
-		cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Dirs.ActiveDirectory,
+		themesDir,
+		activeDir,
 	}
 
+	nginxConfig := filepath.Join(cfg.TBOverride.Dirs.RootDirectory, cfg.TBOverride.Files.NginxConfig)
+	stateFile := filepath.Join(cfg.TBOverride.Dirs.RootDirectory, cfg.TBOverride.Files.StateFile)
+
 	files := []string{
-		cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Files.NginxConfig,
-		cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Files.StateFile,
+		nginxConfig,
+		stateFile,
 	}
 
 	err := validateAndCreate(log, cfg, "directory", directories)
@@ -37,9 +43,12 @@ func Setup(ctx context.Context, log *slog.Logger, cfg *config.Config) error {
 		return err
 	}
 
-	variablesPath := "example_variables.json"
+	variablesPath := filepath.Join(
+		cfg.TBOverride.Dirs.RootDirectory,
+		cfg.TBOverride.Files.ExampleVariablesFilename,
+	)
 
-	if _, err := os.Stat(cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Files.VariablesFilename); errors.Is(err, os.ErrNotExist) {
+	if _, err := os.Stat(variablesPath); errors.Is(err, os.ErrNotExist) {
 		src, err := os.Open(variablesPath)
 		if err != nil {
 			return err
@@ -48,7 +57,7 @@ func Setup(ctx context.Context, log *slog.Logger, cfg *config.Config) error {
 			_ = src.Close()
 		}()
 
-		dst, err := os.Create(cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Files.VariablesFilename)
+		dst, err := os.Create(variablesPath)
 		if err != nil {
 			return err
 		}
@@ -62,14 +71,14 @@ func Setup(ctx context.Context, log *slog.Logger, cfg *config.Config) error {
 			return err
 		}
 	}
-	if _, err := os.Stat(cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Files.StateFile); errors.Is(err, os.ErrNotExist) {
+	if _, err := os.Stat(stateFile); errors.Is(err, os.ErrNotExist) {
 
 		data := core.JSONState{
 			ActiveTheme: "",
 		}
 
 		fileData, _ := json.MarshalIndent(data, "", "    ")
-		err = fs.WriteToFile(cfg.TBOverride.Dirs.RootDirectory+"/"+cfg.TBOverride.Files.StateFile, fileData)
+		err = fs.WriteToFile(stateFile, fileData)
 		if err != nil {
 			return err
 		}
