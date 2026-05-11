@@ -5,10 +5,11 @@ Copyright © 2026 Karanveer Singh kforkaranveer@gmail.com
 package cmd
 
 import (
+	"os"
+
 	"github.com/iamkaran/tb-override/cmd/list"
 	"github.com/iamkaran/tb-override/cmd/theme"
 	"github.com/iamkaran/tb-override/internal/config"
-	"os"
 
 	"github.com/spf13/cobra"
 )

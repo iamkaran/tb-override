@@ -7,10 +7,12 @@ logger:
 tb-override:
   files:
     css_filename: "custom.css"
+    rules_filename: "rules.css"
     state_file: "active/state.json"
     nginx_config: "active/tb-override.conf"
     variables_filename: "variables.json"
     example_variables_filename: "example_variables.json"
+    example_rules_filename: "example_rules.css"
   dirs:
     root_directory: "/opt/tb-override"
     active_directory: "active/assets"

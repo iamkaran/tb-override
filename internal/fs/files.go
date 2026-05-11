@@ -80,7 +80,7 @@ func WriteToFile(path string, data []byte) error {
 	return nil
 }
 
-func GetActiveCSS(cfg *config.Config) (string, error) {
+func GetActiveTheme(cfg *config.Config) (string, error) {
 	stateFile, err := os.ReadFile(filepath.Join(
 		cfg.TBOverride.Dirs.RootDirectory,
 		cfg.TBOverride.Files.StateFile,

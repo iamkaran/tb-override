@@ -3,11 +3,12 @@ package logger
 
 import (
 	"context"
-	"github.com/iamkaran/tb-override/internal/core"
 	"log"
 	"log/slog"
 	"os"
 	"path/filepath"
+
+	"github.com/iamkaran/tb-override/internal/core"
 )
 
 func New(level string, format string) *slog.Logger {

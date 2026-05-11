@@ -4,15 +4,16 @@ package apply
 import (
 	"encoding/json"
 	"fmt"
-	"log/slog"
+	"os"
 	"path/filepath"
+	"slices"
 
 	"github.com/iamkaran/tb-override/internal/config"
 	"github.com/iamkaran/tb-override/internal/core"
 	"github.com/iamkaran/tb-override/internal/fs"
 )
 
-func ApplyTheme(log *slog.Logger, cfg *config.Config, themeName string) error {
+func ApplyTheme(cfg *config.Config, themeName string) error {
 	themesDir := filepath.Join(
 		cfg.TBOverride.Dirs.RootDirectory,
 		cfg.TBOverride.Dirs.ThemesDirectory,
@@ -27,13 +28,8 @@ func ApplyTheme(log *slog.Logger, cfg *config.Config, themeName string) error {
 	if err != nil {
 		return err
 	}
-	isValid := false
-	for _, theme := range listOfThemes {
-		if theme == themeName {
-			isValid = true
-		}
-	}
-	if !isValid {
+
+	if !slices.Contains(listOfThemes, themeName) {
 		return core.ErrInvalidTheme
 	}
 
@@ -41,13 +37,58 @@ func ApplyTheme(log *slog.Logger, cfg *config.Config, themeName string) error {
 		ActiveTheme: themeName,
 	}
 
-	fileData, _ := json.MarshalIndent(data, "", "    ")
+	fileData, err := json.MarshalIndent(data, "", "    ")
+	if err != nil {
+		return err
+	}
+
+	err = ActivateCSSFile(cfg, themeName)
+	if err != nil {
+		return err
+	}
+
 	err = fs.WriteToFile(stateFile, fileData)
 	if err != nil {
 		return err
 	}
 
 	fmt.Printf("Theme %s is set to active\n", themeName)
+
+	return nil
+}
+
+func ActivateCSSFile(cfg *config.Config, activeTheme string) error {
+	themeCSSPath := filepath.Join(
+		cfg.TBOverride.Dirs.RootDirectory,
+		cfg.TBOverride.Dirs.ThemesDirectory,
+		activeTheme,
+		cfg.TBOverride.Files.CSSFilename,
+	)
+
+	activeCSSPath := filepath.Join(
+		cfg.TBOverride.Dirs.RootDirectory,
+		cfg.TBOverride.Dirs.ActiveDirectory,
+		cfg.TBOverride.Files.CSSFilename,
+	)
+
+	relativeCSSPath, err := filepath.Rel(
+		filepath.Dir(activeCSSPath),
+		themeCSSPath,
+	)
+
+	if err != nil {
+		return err
+	}
+
+	err = os.Remove(activeCSSPath)
+	if err != nil && !os.IsNotExist(err) {
+		return err
+	}
+
+	err = os.Symlink(relativeCSSPath, activeCSSPath)
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

@@ -6,7 +6,6 @@ package theme
 import (
 	"github.com/iamkaran/tb-override/internal/apply"
 	"github.com/iamkaran/tb-override/internal/config"
-	"github.com/iamkaran/tb-override/internal/logger"
 	"github.com/spf13/cobra"
 )
 
@@ -20,10 +19,9 @@ var applyCmd = &cobra.Command{
 			return err
 		}
 
-		log := logger.FromContext(cmd.Context())
 		cfg := config.FromContext(cmd.Context())
 
-		err = apply.ApplyTheme(log, cfg, name)
+		err = apply.ApplyTheme(cfg, name)
 		if err != nil {
 			return err
 		}

@@ -2,9 +2,10 @@ package variables_test
 
 import (
 	"fmt"
-	"github.com/iamkaran/tb-override/internal/variables"
 	"log"
 	"testing"
+
+	"github.com/iamkaran/tb-override/internal/variables"
 )
 
 func TestJSONFetch(t *testing.T) {

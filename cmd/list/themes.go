@@ -28,7 +28,7 @@ var listThemesCmd = &cobra.Command{
 			return err
 		}
 
-		activeTheme, err := fs.GetActiveCSS(cfg)
+		activeTheme, err := fs.GetActiveTheme(cfg)
 		if err != nil {
 			return err
 		}
