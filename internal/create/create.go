@@ -29,6 +29,7 @@ func CreateTheme(log *slog.Logger, cfg *config.Config, themeName string) error {
 	if err := fs.CreateDir(log, cfg, customThemeDirectory); err != nil {
 		return err
 	}
+
 	if err := fs.CreateFile(log, cfg, cssFilePath); err != nil {
 		return err
 	}

@@ -12,21 +12,28 @@ import (
 	"github.com/iamkaran/tb-override/internal/fs"
 )
 
-func SetVariable(cfg *config.Config, property core.CSSProperty) error {
-	cssContents, cssFilePath, err := GetCSSContents(cfg)
+func SetVariable(cfg *config.Config, themeName string, property core.CSSProperty) error {
+	cssContents, cssFilePath, err := GetCSSContents(cfg, themeName)
 	if err != nil {
 		return err
 	}
 
 	re := regexp.MustCompile(
-		fmt.Sprintf(`%s:\s*.*?;`, regexp.QuoteMeta(property.Name)),
+		fmt.Sprintf(`[ \t]*%s:\s*.*?;`, regexp.QuoteMeta(property.Name)),
 	)
 
 	if re.MatchString(cssContents) {
-		return EditVariable(cfg, property)
+		propertyStr := fmt.Sprintf("  %s: %s;", property.Name, property.Value)
+
+		updated := re.ReplaceAllString(
+			cssContents,
+			propertyStr,
+		)
+
+		return fs.WriteToFile(cssFilePath, []byte(updated))
 	}
 
-	propertyStr := fmt.Sprintf("  %s: %s;\n", property.Name, property.Value)
+	propertyStr := fmt.Sprintf("\n  %s: %s;\n", property.Name, property.Value)
 	idx := strings.LastIndex(cssContents, "}")
 
 	if idx == -1 {
@@ -45,40 +52,13 @@ func SetVariable(cfg *config.Config, property core.CSSProperty) error {
 	return nil
 }
 
-func EditVariable(cfg *config.Config, property core.CSSProperty) error {
-	cssContents, cssFilePath, err := GetCSSContents(cfg)
+func DeleteVariable(cfg *config.Config, themeName string, variableName string) error {
+	cssContents, cssFilePath, err := GetCSSContents(cfg, themeName)
 	if err != nil {
 		return err
 	}
 
-	propertyStr := fmt.Sprintf("  %s: %s;", property.Name, property.Value)
-
-	re := regexp.MustCompile(fmt.Sprintf(`%s:\s*.*?;`, regexp.QuoteMeta(property.Name)))
-
-	if !re.MatchString(cssContents) {
-		return core.ErrCSSPropNotExist
-	}
-
-	updated := re.ReplaceAllString(
-		cssContents,
-		propertyStr,
-	)
-
-	err = fs.WriteToFile(cssFilePath, []byte(updated))
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func DeleteVariable(cfg *config.Config, property core.CSSProperty) error {
-	cssContents, cssFilePath, err := GetCSSContents(cfg)
-	if err != nil {
-		return err
-	}
-
-	re := regexp.MustCompile(fmt.Sprintf(`\s*%s:\s*.*?;\n?`, regexp.QuoteMeta(property.Name)))
+	re := regexp.MustCompile(fmt.Sprintf(`\s*%s:\s*.*?;\n?`, regexp.QuoteMeta(variableName)))
 	updated := re.ReplaceAllString(
 		cssContents,
 		"",
@@ -92,16 +72,12 @@ func DeleteVariable(cfg *config.Config, property core.CSSProperty) error {
 	return nil
 }
 
-func GetCSSContents(cfg *config.Config) (string, string, error) {
-	cssFileName, err := fs.GetActiveCSS(cfg)
-	if err != nil {
-		return "", "", err
-	}
-
+func GetCSSContents(cfg *config.Config, themeName string) (string, string, error) {
 	cssFilePath := filepath.Join(
 		cfg.TBOverride.Dirs.RootDirectory,
 		cfg.TBOverride.Dirs.ThemesDirectory,
-		cssFileName,
+		themeName,
+		cfg.TBOverride.Files.CSSFilename,
 	)
 
 	cssContents, err := fs.GetFileContents(cssFilePath)

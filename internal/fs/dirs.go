@@ -3,11 +3,12 @@ package fs
 
 import (
 	"errors"
-	"golang.org/x/sys/unix"
 	"log/slog"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"golang.org/x/sys/unix"
 
 	"github.com/iamkaran/tb-override/internal/config"
 	"github.com/iamkaran/tb-override/internal/core"

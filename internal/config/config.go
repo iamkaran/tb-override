@@ -4,12 +4,13 @@ package config
 import (
 	"context"
 	"errors"
-	"github.com/iamkaran/tb-override/internal/core"
-	"github.com/iamkaran/tb-override/internal/detect"
-	"github.com/iamkaran/tb-override/internal/logger"
 	"log"
 	"os"
 	"strings"
+
+	"github.com/iamkaran/tb-override/internal/core"
+	"github.com/iamkaran/tb-override/internal/detect"
+	"github.com/iamkaran/tb-override/internal/logger"
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
@@ -37,8 +38,10 @@ type TBOverrideFilesConfig struct {
 	NginxConfig              string `mapstructure:"nginx_config"`
 	StateFile                string `mapstructure:"state_file"`
 	CSSFilename              string `mapstructure:"css_filename"`
+	RulesFilename            string `mapstructure:"rules_filename"`
 	VariablesFilename        string `mapstructure:"variables_filename"`
 	ExampleVariablesFilename string `mapstructure:"example_variables_filename"`
+	ExampleRulesFilename     string `mapstructure:"example_rules_filename"`
 }
 
 type TBOverrideDirsConfig struct {
