@@ -5,6 +5,7 @@ package list
 
 import (
 	"fmt"
+	"path/filepath"
 
 	"github.com/iamkaran/tb-override/internal/config"
 	"github.com/iamkaran/tb-override/internal/fs"
@@ -18,7 +19,11 @@ var listThemesCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		cfg := config.FromContext(cmd.Context())
 
-		listOfThemes, err := fs.ListDirs(cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Dirs.ThemesDirectory)
+		listOfThemes, err := fs.ListDirs(filepath.Join(
+			cfg.TBOverride.Dirs.RootDirectory,
+			cfg.TBOverride.Dirs.ThemesDirectory,
+		))
+
 		if err != nil {
 			return err
 		}

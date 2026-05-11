@@ -13,4 +13,8 @@ var (
 
 	// Theme
 	ErrNoActiveTheme = errors.New("no active theme is configured")
+
+	// CSS
+	ErrInvalidCSS      = errors.New("invalid CSS structure")
+	ErrCSSPropNotExist = errors.New("property does not exist")
 )

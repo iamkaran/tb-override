@@ -11,3 +11,8 @@ const (
 type JSONState struct {
 	ActiveTheme string `json:"active_theme"`
 }
+
+type CSSProperty struct {
+	Name  string
+	Value string
+}

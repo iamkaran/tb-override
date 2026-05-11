@@ -34,10 +34,11 @@ type TBOverrideConfig struct {
 }
 
 type TBOverrideFilesConfig struct {
-	NginxConfig       string `mapstructure:"nginx_config"`
-	StateFile         string `mapstructure:"state_file"`
-	CSSFilename       string `mapstructure:"css_filename"`
-	VariablesFilename string `mapstructure:"variables_filename"`
+	NginxConfig              string `mapstructure:"nginx_config"`
+	StateFile                string `mapstructure:"state_file"`
+	CSSFilename              string `mapstructure:"css_filename"`
+	VariablesFilename        string `mapstructure:"variables_filename"`
+	ExampleVariablesFilename string `mapstructure:"example_variables_filename"`
 }
 
 type TBOverrideDirsConfig struct {

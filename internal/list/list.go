@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"os"
+	"path/filepath"
 	"text/tabwriter"
 
 	"github.com/iamkaran/tb-override/internal/config"
@@ -13,7 +14,10 @@ import (
 )
 
 func ListVariables(ctx context.Context, cfg *config.Config, cmd *cobra.Command) error {
-	cssProperties, err := variables.LoadMap(cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Files.VariablesFilename)
+	cssProperties, err := variables.LoadMap(filepath.Join(
+		cfg.TBOverride.Dirs.RootDirectory,
+		cfg.TBOverride.Files.VariablesFilename,
+	))
 
 	if err != nil {
 		return err

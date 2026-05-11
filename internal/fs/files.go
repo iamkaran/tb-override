@@ -81,7 +81,10 @@ func WriteToFile(path string, data []byte) error {
 }
 
 func GetActiveCSS(cfg *config.Config) (string, error) {
-	stateFile, err := os.ReadFile(cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Files.StateFile)
+	stateFile, err := os.ReadFile(filepath.Join(
+		cfg.TBOverride.Dirs.RootDirectory,
+		cfg.TBOverride.Files.StateFile,
+	))
 	if err != nil {
 		return "", err
 	}
