@@ -23,6 +23,7 @@ func ListVariables(ctx context.Context, cfg *config.Config, cmd *cobra.Command) 
 		for _, c := range categories {
 			_, _ = fmt.Println(c)
 		}
+		return nil
 	}
 
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
@@ -33,7 +34,7 @@ func ListVariables(ctx context.Context, cfg *config.Config, cmd *cobra.Command) 
 		for _, c := range properties {
 			printRow(w, c.Name, c.Type, c.Default, c.Description)
 		}
-	} else {
+	} else if listAll, _ := cmd.Flags().GetBool("list-all"); listAll {
 		allVariables := cssProperties.FetchVariables()
 		for category, vars := range allVariables {
 			for _, v := range vars {
@@ -47,6 +48,7 @@ func ListVariables(ctx context.Context, cfg *config.Config, cmd *cobra.Command) 
 			}
 		}
 	}
+
 	err = w.Flush()
 	if err != nil {
 		return err

@@ -38,35 +38,41 @@ func Setup(ctx context.Context, log *slog.Logger, cfg *config.Config) error {
 	}
 
 	variablesPath := "example_variables.json"
-	src, err := os.Open(variablesPath)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		_ = src.Close()
-	}()
 
-	dst, err := os.Create(cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Files.VariablesFilename)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		_ = src.Close()
-	}()
+	if _, err := os.Stat(cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Files.VariablesFilename); errors.Is(err, os.ErrNotExist) {
+		src, err := os.Open(variablesPath)
+		if err != nil {
+			return err
+		}
+		defer func() {
+			_ = src.Close()
+		}()
 
-	_, err = io.Copy(dst, src)
-	if err != nil {
-		return err
-	}
+		dst, err := os.Create(cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Files.VariablesFilename)
+		if err != nil {
+			return err
+		}
 
-	data := core.JSONState{
-		ActiveTheme: "",
-	}
+		defer func() {
+			_ = src.Close()
+		}()
 
-	fileData, _ := json.MarshalIndent(data, "", "    ")
-	err = fs.WriteToFile(cfg.TBOverride.Dirs.RootDirectory+"/"+cfg.TBOverride.Files.StateFile, fileData)
-	if err != nil {
-		return err
+		_, err = io.Copy(dst, src)
+		if err != nil {
+			return err
+		}
+	}
+	if _, err := os.Stat(cfg.TBOverride.Dirs.RootDirectory + "/" + cfg.TBOverride.Files.StateFile); errors.Is(err, os.ErrNotExist) {
+
+		data := core.JSONState{
+			ActiveTheme: "",
+		}
+
+		fileData, _ := json.MarshalIndent(data, "", "    ")
+		err = fs.WriteToFile(cfg.TBOverride.Dirs.RootDirectory+"/"+cfg.TBOverride.Files.StateFile, fileData)
+		if err != nil {
+			return err
+		}
 	}
 
 	return nil
