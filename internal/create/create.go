@@ -20,6 +20,15 @@ func CreateTheme(log *slog.Logger, cfg *config.Config, themeName string) error {
 		return err
 	}
 
+	defaultCSS := []byte(`:root {
+
+}`)
+
+	err := fs.WriteToFile(cssFilePath, defaultCSS)
+	if err != nil {
+		return err
+	}
+
 	fmt.Printf("Theme %s created at %s\n", themeName, customThemeDirectory)
 
 	return nil

@@ -5,6 +5,8 @@ Copyright © 2026 Karanveer Singh kforkaranveer@gmail.com
 package cmd
 
 import (
+	"github.com/iamkaran/tb-override/cmd/list"
+	"github.com/iamkaran/tb-override/cmd/theme"
 	"github.com/iamkaran/tb-override/internal/config"
 	"os"
 
@@ -37,4 +39,6 @@ func Execute() {
 }
 
 func init() {
+	rootCmd.AddCommand(theme.ThemeCmd)
+	rootCmd.AddCommand(list.ListCmd)
 }
