@@ -17,15 +17,9 @@ import (
 )
 
 type Config struct {
-	Thingsboard ThingsboardConfig `mapstructure:"thingsboard"`
-	Logger      LoggerConfig      `mapstructure:"logger"`
-	TBOverride  TBOverrideConfig  `mapstructure:"tb-override"`
-	Output      OutputConfig      `mapstructure:"output"`
-}
-
-type ThingsboardConfig struct {
-	Host string `mapstructure:"host"`
-	Port int    `mapstructure:"port"`
+	Logger     LoggerConfig     `mapstructure:"logger"`
+	TBOverride TBOverrideConfig `mapstructure:"tb-override"`
+	Output     OutputConfig     `mapstructure:"output"`
 }
 
 type TBOverrideConfig struct {
