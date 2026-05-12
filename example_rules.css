@@ -92,7 +92,10 @@ img[src*="logo_title_white.svg"]{
 }
 
 /* Case B: inline svg */
-.tb-side-menu svg{
+tb-logo svg,
+.tb-logo svg,
+.tb-logo-title svg,
+.login-logo svg{
   width: var(--tb-logo-w) !important;
   height: var(--tb-logo-h) !important;
 }
