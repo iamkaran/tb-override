@@ -1,3 +1,7 @@
+> [!NOTE]
+> This repo has been archived since its better to just build thingsboard from source as its hard to target css properties
+> Will share a guide in future!
+
 # `tb-override` - White Labeling for ThingsBoard CE
 <p align="center">
   <img src="https://github.com/user-attachments/assets/48720da6-9b9f-4792-bc1b-fc993f3522d8" style="background: transparent;" />
