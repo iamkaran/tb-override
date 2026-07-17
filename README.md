@@ -1,6 +1,5 @@
 > [!NOTE]
-> This repo has been archived since its better to just build thingsboard from source as its hard to target css properties
-> Will share a guide in future!
+> Some properties are hard to target specifically, as a alternative you can try rebuilding from modified thingsboard source!
 
 # `tb-override` - White Labeling for ThingsBoard CE
 <p align="center">
